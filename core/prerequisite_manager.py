@@ -608,19 +608,32 @@ class PrerequisiteManager:
         yield "[INFO] Installing OpenSSL 3.x (Shining Light Productions build)..."
 
         # ── Attempt 1: winget ─────────────────────────────────────────
-        yield "[INFO] Trying winget (ShiningLight.OpenSSL)..."
-        cmd = ["winget", "install", "--id", "ShiningLight.OpenSSL",
-               "--silent", "--accept-package-agreements", "--accept-source-agreements"]
-        exit_code = yield from self._stream_cmd(cmd)
+        if self._winget_available():
+            yield "[INFO] Trying winget (ShiningLight.OpenSSL)..."
+            cmd = ["winget", "install", "--id", "ShiningLight.OpenSSL",
+                   "--silent", "--accept-package-agreements", "--accept-source-agreements"]
+            exit_code = yield from self._stream_cmd(cmd)
 
-        if exit_code == 0:
-            yield "[OK] OpenSSL installed via winget."
-            yield "[INFO] Default install path: C:\\Program Files\\OpenSSL-Win64"
-            yield "[INFO] Add OpenSSL\\bin to PATH if not already present."
-            return
+            if exit_code == 0:
+                yield "[OK] OpenSSL installed via winget."
+                openssl_bin = self._find_openssl_bin()
+                if openssl_bin:
+                    yield f"[INFO] Detected OpenSSL at: {openssl_bin}"
+                    self._add_to_path(openssl_bin)
+                    os.environ["PATH"] = os.environ.get("PATH", "") + f";{openssl_bin}"
+                    yield "[OK] OpenSSL added to PATH."
+                else:
+                    # winget installs to Program Files — pre-add the standard path
+                    fallback_bin = r"C:\Program Files\OpenSSL-Win64\bin"
+                    self._add_to_path(fallback_bin)
+                    os.environ["PATH"] = os.environ.get("PATH", "") + f";{fallback_bin}"
+                    yield f"[INFO] Pre-added PATH: {fallback_bin}"
+                return
+            yield "[WARN] winget failed — downloading installer directly..."
+        else:
+            yield "[WARN] winget not available — downloading installer directly..."
 
         # ── Attempt 2: direct download from slproweb.com ─────────────
-        yield "[WARN] winget failed — downloading installer directly..."
         yield from self._download_and_install_openssl(req)
 
     def _download_and_install_openssl(self, req: dict) -> Generator[str, None, None]:
@@ -683,9 +696,11 @@ class PrerequisiteManager:
         )
         if exit_code == 0:
             yield f"[OK] OpenSSL installed to {install_dir}"
-            yield "[INFO] Adding OpenSSL\\bin to system PATH..."
-            self._add_to_path(f"{install_dir}\\bin")
-            yield "[OK] Done. Restart Server Forge to re-check."
+            bin_dir = f"{install_dir}\\bin"
+            yield f"[INFO] Adding {bin_dir} to PATH..."
+            self._add_to_path(bin_dir)
+            os.environ["PATH"] = os.environ.get("PATH", "") + f";{bin_dir}"
+            yield "[OK] OpenSSL added to PATH. Re-check Prerequisites to confirm."
         else:
             yield f"[WARN] Installer exited with code {exit_code}."
             yield "[INFO] Try running the downloaded installer manually:"
@@ -822,6 +837,20 @@ class PrerequisiteManager:
             return r.returncode == 0
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
+
+    def _find_openssl_bin(self) -> str:
+        """Return the OpenSSL bin directory path after install, or ''."""
+        program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
+        candidates = [
+            os.path.join(program_files, "OpenSSL-Win64", "bin"),
+            os.path.join(program_files, "OpenSSL", "bin"),
+            r"C:\OpenSSL-Win64\bin",
+            r"C:\OpenSSL\bin",
+        ]
+        for candidate in candidates:
+            if Path(candidate, "openssl.exe").exists():
+                return candidate
+        return ""
 
     def _find_mysql_bin(self) -> str:
         """Scan the standard MySQL install tree and return the bin directory path, or ''."""
