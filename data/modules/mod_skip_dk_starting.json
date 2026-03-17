@@ -1,0 +1,19 @@
+{
+  "id": "mod_skip_dk_starting",
+  "display_name": "Skip DK Starting Zone",
+  "description": "Allows Death Knight players to skip the starting zone questline and go directly to their faction capital. Saves time on servers where players have completed it before.",
+  "author": "azerothcore-team",
+  "repo": {
+    "url": "https://github.com/azerothcore/mod-skip-dk-starting-area.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-skip-dk-starting-area"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["azerothcore_3_3_5a", "trinitycore_3_3_5a"],
+  "incompatible_with": [],
+  "requires_db_patch": true,
+  "db_patch_dir": "data/sql/",
+  "warning": null,
+  "tags": ["gameplay", "quality-of-life"]
+}

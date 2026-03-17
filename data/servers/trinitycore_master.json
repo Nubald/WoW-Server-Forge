@@ -1,0 +1,40 @@
+{
+  "id": "trinitycore_master",
+  "display_name": "TrinityCore Master (Dragonflight)",
+  "short_name": "TC Master",
+  "expansion": "dragonflight",
+  "wow_version": "10.x",
+  "repo": {
+    "url": "https://github.com/TrinityCore/TrinityCore.git",
+    "branch": "master",
+    "min_commit": null
+  },
+  "build": {
+    "cmake_generator": "Visual Studio 17 2022",
+    "cmake_arch": "x64",
+    "default_options": {
+      "TOOLS": "ON",
+      "USE_COREPCH": "ON",
+      "WITH_WARNINGS": "OFF"
+    },
+    "required_vs_version": "17",
+    "supported_build_types": ["RelWithDebInfo", "Release", "Debug"]
+  },
+  "databases": [
+    { "key": "auth",       "default_name": "auth",       "sql_dir": "sql/base",  "update_dir": "sql/updates/auth" },
+    { "key": "characters", "default_name": "characters",  "sql_dir": "sql/base",  "update_dir": "sql/updates/characters" },
+    { "key": "world",      "default_name": "world",       "sql_dir": null,        "update_dir": "sql/updates/world" },
+    { "key": "hotfixes",   "default_name": "hotfixes",    "sql_dir": "sql/base",  "update_dir": "sql/updates/hotfixes" }
+  ],
+  "executables": {
+    "authserver": "bnetserver.exe",
+    "worldserver": "worldserver.exe"
+  },
+  "conf_templates": {
+    "authserver": "bnetserver.conf.dist",
+    "worldserver": "worldserver.conf.dist"
+  },
+  "compatible_modules": [],
+  "client_version": "10.x",
+  "color_accent": "#1AE8D4"
+}

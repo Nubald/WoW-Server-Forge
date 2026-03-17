@@ -1,0 +1,97 @@
+{
+  "platform": "windows",
+  "requirements": [
+    {
+      "id": "git",
+      "display_name": "Git",
+      "min_version": "2.40.0",
+      "check_command": ["git", "--version"],
+      "version_regex": "git version (\\d+\\.\\d+\\.\\d+)",
+      "winget_id": "Git.Git",
+      "fallback_url": "https://git-scm.com/download/win",
+      "required": true,
+      "path_hint": "C:\\Program Files\\Git\\cmd"
+    },
+    {
+      "id": "cmake",
+      "display_name": "CMake",
+      "min_version": "3.20.0",
+      "check_command": ["cmake", "--version"],
+      "version_regex": "cmake version (\\d+\\.\\d+\\.\\d+)",
+      "winget_id": "Kitware.CMake",
+      "fallback_url": "https://cmake.org/download/",
+      "required": true,
+      "path_hint": null
+    },
+    {
+      "id": "visual_studio",
+      "display_name": "Visual Studio Build Tools 2022",
+      "min_version": "17.0",
+      "check_command": null,
+      "version_regex": null,
+      "registry_key": "HKLM\\SOFTWARE\\Microsoft\\VisualStudio\\17.0",
+      "winget_id": "Microsoft.VisualStudio.2022.BuildTools",
+      "fallback_url": "https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022",
+      "workloads": ["Microsoft.VisualStudio.Workload.VCTools"],
+      "required": true,
+      "path_hint": null
+    },
+    {
+      "id": "mysql",
+      "display_name": "MySQL Server 8.x",
+      "min_version": "8.0.0",
+      "check_command": ["mysql", "--version"],
+      "version_regex": "Ver (\\d+\\.\\d+\\.\\d+)",
+      "winget_id": "Oracle.MySQL",
+      "fallback_url": "https://dev.mysql.com/downloads/installer/",
+      "required": true,
+      "path_hints": [
+        "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin",
+        "C:\\Program Files\\MySQL\\MySQL Server 8.1\\bin",
+        "C:\\Program Files\\MySQL\\MySQL Server 8.2\\bin",
+        "C:\\Program Files\\MySQL\\MySQL Server 8.3\\bin",
+        "C:\\Program Files\\MySQL\\MySQL Server 8.4\\bin"
+      ]
+    },
+    {
+      "id": "openssl",
+      "display_name": "OpenSSL 3.x",
+      "min_version": "3.0.0",
+      "check_command": ["openssl", "version"],
+      "version_regex": "OpenSSL (\\d+\\.\\d+\\.\\d+)",
+      "winget_id": "ShiningLight.OpenSSL",
+      "fallback_url": "https://slproweb.com/products/Win32OpenSSL.html",
+      "required": true,
+      "path_hints": [
+        "C:\\Program Files\\OpenSSL-Win64\\bin",
+        "C:\\OpenSSL-Win64\\bin",
+        "C:\\Program Files\\OpenSSL\\bin"
+      ],
+      "install_args": ["/silent", "/sp-", "/suppressmsgboxes", "/DIR=C:\\OpenSSL-Win64"]
+    },
+    {
+      "id": "boost",
+      "display_name": "Boost Libraries 1.86+",
+      "min_version": "1.82.0",
+      "check_command": null,
+      "version_regex": null,
+      "env_var": "BOOST_ROOT",
+      "winget_id": null,
+      "fallback_url": "https://sourceforge.net/projects/boost/files/boost-binaries/",
+      "required": true,
+      "cmake_hint": "BOOST_ROOT",
+      "path_hints": [
+        "C:\\local\\boost_1_86_0",
+        "C:\\local\\boost_1_85_0",
+        "C:\\local\\boost_1_84_0",
+        "C:\\local\\boost_1_83_0",
+        "C:\\local\\boost_1_82_0",
+        "C:\\boost"
+      ],
+      "download_url": "https://boostorg.jfrog.io/artifactory/main/release/1.86.0/binaries/boost_1_86_0-msvc-14.3-64.exe",
+      "download_url_fallback": "https://sourceforge.net/projects/boost/files/boost-binaries/1.86.0/boost_1_86_0-msvc-14.3-64.exe/download",
+      "install_dir": "C:\\local\\boost_1_86_0",
+      "env_key": "BOOST_ROOT"
+    }
+  ]
+}

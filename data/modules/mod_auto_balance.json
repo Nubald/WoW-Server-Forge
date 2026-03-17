@@ -1,0 +1,19 @@
+{
+  "id": "mod_auto_balance",
+  "display_name": "Auto Balance",
+  "description": "Automatically scales dungeon and raid difficulty based on the number of players. Perfect for solo or small group play on content designed for more players.",
+  "author": "azerothcore-team",
+  "repo": {
+    "url": "https://github.com/azerothcore/mod-autobalance.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-autobalance"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["azerothcore_3_3_5a", "trinitycore_3_3_5a"],
+  "incompatible_with": [],
+  "requires_db_patch": false,
+  "db_patch_dir": "",
+  "warning": null,
+  "tags": ["gameplay", "solo-friendly", "combat"]
+}

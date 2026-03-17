@@ -1,0 +1,19 @@
+{
+  "id": "mod_solocraft",
+  "display_name": "Solo Craft",
+  "description": "Buffs solo players in dungeons and raids to compensate for missing group members. Adjust per-role buffs so a solo player can experience all group content.",
+  "author": "azerothcore-team",
+  "repo": {
+    "url": "https://github.com/azerothcore/mod-solocraft.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-solocraft"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["azerothcore_3_3_5a", "trinitycore_3_3_5a"],
+  "incompatible_with": ["mod_auto_balance"],
+  "requires_db_patch": false,
+  "db_patch_dir": "",
+  "warning": "Incompatible with Auto Balance — enable one or the other.",
+  "tags": ["gameplay", "solo-friendly", "combat"]
+}

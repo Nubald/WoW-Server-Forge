@@ -1,0 +1,19 @@
+{
+  "id": "eluna",
+  "display_name": "Eluna Lua Engine",
+  "description": "Adds a full Lua scripting engine to your server. Run custom scripts, events, and game logic in Lua. The most popular WoW server scripting platform.",
+  "author": "ElunaLuaEngine",
+  "repo": {
+    "url": "https://github.com/ElunaLuaEngine/mod-eluna.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-eluna"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["trinitycore_3_3_5a", "trinitycore_master", "azerothcore_3_3_5a"],
+  "incompatible_with": [],
+  "requires_db_patch": false,
+  "db_patch_dir": "",
+  "warning": null,
+  "tags": ["scripting", "gameplay", "lua"]
+}

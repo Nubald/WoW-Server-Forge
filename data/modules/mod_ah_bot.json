@@ -1,0 +1,19 @@
+{
+  "id": "mod_ah_bot",
+  "display_name": "Auction House Bot",
+  "description": "Automatically populates the Auction House with items, making it functional even with few players. Configurable price ranges and item categories.",
+  "author": "azerothcore-team",
+  "repo": {
+    "url": "https://github.com/azerothcore/mod-ah-bot.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-ah-bot"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["azerothcore_3_3_5a"],
+  "incompatible_with": [],
+  "requires_db_patch": true,
+  "db_patch_dir": "data/sql/",
+  "warning": null,
+  "tags": ["economy", "gameplay"]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "mod_npc_bots",
+  "display_name": "NPC Bots",
+  "description": "Adds AI-controlled player bots as NPCs you can hire and command. Great for solo or small group content — fill your raid with bots!",
+  "author": "trickerer",
+  "repo": {
+    "url": "https://github.com/trickerer/Trinity-Bots.git",
+    "branch": "master",
+    "integration_type": "submodule",
+    "target_path": "modules/mod-npc-bots"
+  },
+  "cmake_options": {},
+  "compatible_servers": ["trinitycore_3_3_5a", "trinitycore_master"],
+  "incompatible_with": [],
+  "requires_db_patch": true,
+  "db_patch_dir": "sql/",
+  "warning": null,
+  "tags": ["gameplay", "bots", "solo-friendly"]
+}

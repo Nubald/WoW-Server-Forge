@@ -1,0 +1,39 @@
+{
+  "id": "mangoszero_vanilla",
+  "display_name": "MaNGOSZero Vanilla (1.12.1)",
+  "short_name": "MaNGOS0 Vanilla",
+  "expansion": "vanilla",
+  "wow_version": "1.12.1",
+  "repo": {
+    "url": "https://github.com/mangoszero/server.git",
+    "branch": "develop21",
+    "min_commit": null
+  },
+  "build": {
+    "cmake_generator": "Visual Studio 17 2022",
+    "cmake_arch": "x64",
+    "default_options": {
+      "BUILD_TOOLS": "ON",
+      "BUILD_PLAYERBOT": "OFF"
+    },
+    "required_vs_version": "17",
+    "supported_build_types": ["RelWithDebInfo", "Release", "Debug"]
+  },
+  "databases": [
+    { "key": "auth",       "default_name": "realmd0",    "sql_dir": "sql",  "update_dir": "sql/updates/realmd" },
+    { "key": "characters", "default_name": "characters0", "sql_dir": "sql",  "update_dir": "sql/updates/characters" },
+    { "key": "world",      "default_name": "mangos0",     "sql_dir": "sql",  "update_dir": "sql/updates/world" }
+  ],
+  "executables": {
+    "authserver": "realmd.exe",
+    "worldserver": "mangosd.exe"
+  },
+  "conf_templates": {
+    "authserver": "realmd.conf.dist",
+    "worldserver": "mangosd.conf.dist"
+  },
+  "compatible_modules": [],
+  "client_version": "1.12.1-5875",
+  "notes": "The original MaNGOS project for Vanilla WoW. Requires the ACID (Creature AI) database submodule separately.",
+  "color_accent": "#DAA520"
+}

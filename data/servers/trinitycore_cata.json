@@ -1,0 +1,45 @@
+{
+  "id": "trinitycore_cata",
+  "display_name": "TrinityCore Cataclysm (4.3.4)",
+  "short_name": "TC Cata",
+  "expansion": "cata",
+  "wow_version": "4.3.4",
+  "repo": {
+    "url": "https://github.com/TrinityCore/TrinityCore.git",
+    "branch": "4.3.4",
+    "min_commit": null
+  },
+  "build": {
+    "cmake_generator": "Visual Studio 17 2022",
+    "cmake_arch": "x64",
+    "default_options": {
+      "TOOLS": "ON",
+      "USE_COREPCH": "ON",
+      "WITH_WARNINGS": "OFF"
+    },
+    "required_vs_version": "17",
+    "supported_build_types": ["RelWithDebInfo", "Release", "Debug"]
+  },
+  "databases": [
+    { "key": "auth",       "default_name": "auth",       "sql_dir": "sql/base",  "update_dir": "sql/updates/auth" },
+    { "key": "characters", "default_name": "characters",  "sql_dir": "sql/base",  "update_dir": "sql/updates/characters" },
+    { "key": "world",      "default_name": "world",       "sql_dir": null,        "update_dir": "sql/updates/world",
+      "data_source": "tdb",
+      "tdb": {
+        "releases_url": "https://api.github.com/repos/TrinityCore/TrinityCore/releases",
+        "asset_pattern": "TDB434_full_*.7z"
+      }
+    }
+  ],
+  "executables": {
+    "authserver": "authserver.exe",
+    "worldserver": "worldserver.exe"
+  },
+  "conf_templates": {
+    "authserver": "authserver.conf.dist",
+    "worldserver": "worldserver.conf.dist"
+  },
+  "compatible_modules": ["eluna"],
+  "client_version": "4.3.4-15595",
+  "color_accent": "#FF6B2B"
+}

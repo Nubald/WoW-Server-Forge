@@ -1,0 +1,29 @@
+{
+  "id": "cmangos_vanilla",
+  "display_name": "CMaNGOS Vanilla (1.12.1)",
+  "short_name": "CMaNGOS Classic",
+  "expansion": "vanilla",
+  "wow_version": "1.12.1",
+  "repo": {
+    "url": "https://github.com/cmangos/mangos-classic.git",
+    "branch": "master",
+    "min_commit": null
+  },
+  "build": {
+    "cmake_generator": "Visual Studio 17 2022",
+    "cmake_arch": "x64",
+    "default_options": { "BUILD_TOOLS": "ON" },
+    "required_vs_version": "17",
+    "supported_build_types": ["RelWithDebInfo", "Release", "Debug"]
+  },
+  "databases": [
+    { "key": "auth",       "default_name": "realmd",     "sql_dir": "sql", "update_dir": "sql/updates" },
+    { "key": "characters", "default_name": "characters",  "sql_dir": "sql", "update_dir": "sql/updates" },
+    { "key": "world",      "default_name": "mangos",      "sql_dir": "sql", "update_dir": "sql/updates" }
+  ],
+  "executables": { "authserver": "realmd.exe", "worldserver": "mangosd.exe" },
+  "conf_templates": { "authserver": "realmd.conf.dist", "worldserver": "mangosd.conf.dist" },
+  "compatible_modules": [],
+  "client_version": "1.12.1-5875",
+  "color_accent": "#E8D41A"
+}
