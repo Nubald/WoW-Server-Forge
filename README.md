@@ -36,8 +36,8 @@ All other dependencies (Git, CMake, VS Build Tools, MySQL, OpenSSL, Boost) can b
 ## Quick Start
 
 ```bat
-git clone https://github.com/YOUR_USERNAME/wow-server-forge.git
-cd wow-server-forge
+git clone https://github.com/Nubald/WoW-Server-Forge.git
+cd WoW-Server-Forge
 setup.bat          # installs Python packages
 run.bat            # launches the app
 ```
