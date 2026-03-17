@@ -1,0 +1,82 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller `
+            --onedir `
+            --windowed `
+            --name "WoW-Server-Forge" `
+            --collect-data customtkinter `
+            --collect-data PIL `
+            --add-data "data;data" `
+            --hidden-import customtkinter `
+            --hidden-import PIL._tkinter_finder `
+            --hidden-import requests `
+            --hidden-import psutil `
+            --hidden-import packaging `
+            --hidden-import packaging.version `
+            --hidden-import mysql.connector `
+            --hidden-import jinja2 `
+            --hidden-import win32api `
+            --hidden-import win32con `
+            --hidden-import win32process `
+            --hidden-import pywintypes `
+            main.py
+
+      - name: Copy launcher into dist
+        run: |
+          Copy-Item run.bat dist\WoW-Server-Forge\run.bat
+
+      - name: Zip the build
+        run: |
+          $tag = "${{ github.ref_name }}"
+          Compress-Archive `
+            -Path "dist\WoW-Server-Forge" `
+            -DestinationPath "WoW-Server-Forge-${tag}-windows.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "WoW Server Forge ${{ github.ref_name }}"
+          body: |
+            ## WoW Server Forge ${{ github.ref_name }}
+
+            ### Installation
+            1. Download **WoW-Server-Forge-${{ github.ref_name }}-windows.zip**
+            2. Extract it anywhere (e.g. `C:\WoW-Server-Forge\`)
+            3. Run **WoW-Server-Forge.exe**
+
+            No Python installation required.
+
+            ### First launch
+            The app will guide you through installing all required build tools (Git, CMake, Visual Studio, MySQL, OpenSSL, Boost) automatically from the **Prerequisites** tab.
+
+            ### Requirements
+            - Windows 10 / 11 (64-bit)
+            - Internet connection (for downloading server sources and prerequisites)
+          files: WoW-Server-Forge-${{ github.ref_name }}-windows.zip
+          draft: false
+          prerelease: false
