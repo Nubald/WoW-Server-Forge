@@ -221,6 +221,8 @@ class ForgeApplication:
         profile = self.state.active_profile
         if not profile:
             return None
+        if profile.source_dir:
+            return Path(profile.source_dir)
         return Path(profile.workspace_dir) / "source"
 
     def _show_first_run_wizard(self) -> None:

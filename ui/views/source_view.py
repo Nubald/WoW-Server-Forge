@@ -106,12 +106,16 @@ class SourceView(BaseView):
             self._repo_lbl.configure(text=f"Repository: {repo.get('url', '—')}")
             self._branch_lbl.configure(text=f"Branch: {repo.get('branch', '—')}")
 
-        source_dir = Path(profile.workspace_dir) / "source"
+        source_dir = Path(profile.source_dir) if profile.source_dir else Path(profile.workspace_dir) / "source"
         if not self._path_entry.get():
             self._path_entry.delete(0, "end")
             self._path_entry.insert(0, str(source_dir))
 
         if source_dir.exists() and self._source_mgr.is_repo(source_dir):
+            # Backfill source_dir on the profile if it wasn't saved yet
+            if not profile.source_dir:
+                profile.source_dir = str(source_dir)
+                profile.save(self.app.profiles_dir)
             commit = self._source_mgr.get_commit(source_dir)
             self._commit_lbl.configure(text=f"Local commit: {commit}", text_color=COLOR_SUCCESS)
             self._next_btn.configure(state="normal")
@@ -137,6 +141,7 @@ class SourceView(BaseView):
         branch = sdef["repo"]["branch"]
         target = Path(self._path_entry.get() or
                       str(Path(profile.workspace_dir) / "source"))
+        self._pending_clone_target = target
 
         self._clone_btn.configure(state="disabled", text="Cloning...")
         self._log.clear()
@@ -150,6 +155,10 @@ class SourceView(BaseView):
     def _on_clone_done(self):
         self._clone_btn.configure(state="normal", text="⬇  Clone Repository")
         self._next_btn.configure(state="normal")
+        profile = self.state.active_profile
+        if profile and hasattr(self, "_pending_clone_target"):
+            profile.source_dir = str(self._pending_clone_target)
+            profile.save(self.app.profiles_dir)
         self.refresh()
 
     def _update(self):

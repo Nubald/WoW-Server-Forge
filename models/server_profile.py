@@ -49,6 +49,7 @@ class ServerProfile:
     server_id: str = ""
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     workspace_dir: str = ""
+    source_dir: str = ""
     build_dir: str = ""
     install_dir: str = ""
     enabled_modules: list[str] = field(default_factory=list)

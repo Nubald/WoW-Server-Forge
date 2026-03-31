@@ -100,6 +100,10 @@ class PrerequisiteManager:
             return self._check_vs(req)
         if rid == "boost":
             return self._check_boost(req)
+        if rid == "mysql":
+            return self._check_mysql(req)
+        if rid == "openssl":
+            return self._check_openssl(req)
 
         cmd = req.get("check_command")
         if not cmd:
@@ -560,6 +564,63 @@ class PrerequisiteManager:
             self._open_url(req.get("fallback_url", ""))
             yield "[INFO] Download 'Build Tools for Visual Studio 2022', run it, and select:"
             yield "[INFO]   'Desktop development with C++'"
+
+    def _check_mysql(self, req: dict) -> PrereqResult:
+        """Detect MySQL by dynamically scanning the install tree, then running mysql --version."""
+        name = req["display_name"]
+        min_ver = req.get("min_version", "8.0.0")
+
+        # Dynamically find the bin dir (works regardless of PATH)
+        bin_dir = self._find_mysql_bin()
+        if not bin_dir:
+            return PrereqResult(req["id"], name, False, message="Not found in PATH")
+
+        mysql_exe = str(Path(bin_dir) / "mysql.exe")
+        try:
+            result = subprocess.run(
+                [mysql_exe, "--version"], capture_output=True, text=True, timeout=10
+            )
+            output = (result.stdout + result.stderr).strip()
+            version = self._parse_version(output, req.get("version_regex", ""))
+            ok = self._version_ok(version, min_ver)
+            return PrereqResult(
+                req["id"], name, ok,
+                version=version,
+                path=mysql_exe,
+                message="" if ok else (
+                    f"Found {version}, need {min_ver}+" if version else "Not found"
+                ),
+            )
+        except Exception as e:
+            return PrereqResult(req["id"], name, False, message=str(e))
+
+    def _check_openssl(self, req: dict) -> PrereqResult:
+        """Detect OpenSSL by scanning known install locations, then running openssl version."""
+        name = req["display_name"]
+        min_ver = req.get("min_version", "3.0.0")
+
+        bin_dir = self._find_openssl_bin()
+        if not bin_dir:
+            return PrereqResult(req["id"], name, False, message="Not found in PATH")
+
+        openssl_exe = str(Path(bin_dir) / "openssl.exe")
+        try:
+            result = subprocess.run(
+                [openssl_exe, "version"], capture_output=True, text=True, timeout=10
+            )
+            output = (result.stdout + result.stderr).strip()
+            version = self._parse_version(output, req.get("version_regex", ""))
+            ok = self._version_ok(version, min_ver)
+            return PrereqResult(
+                req["id"], name, ok,
+                version=version,
+                path=openssl_exe,
+                message="" if ok else (
+                    f"Found {version}, need {min_ver}+" if version else "Not found"
+                ),
+            )
+        except Exception as e:
+            return PrereqResult(req["id"], name, False, message=str(e))
 
     def _install_mysql(self, req: dict) -> Generator[str, None, None]:
         """Install MySQL Server 8.x — winget with auto PATH detection."""

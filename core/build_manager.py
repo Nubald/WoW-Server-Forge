@@ -101,14 +101,13 @@ class BuildManager:
         """Return CMake -D options that can be inferred from the local environment.
 
         These act as safe defaults — the caller's explicit options always win.
-        Currently injects BOOST_ROOT when the env var or a known install path is set.
+        Injects BOOST_ROOT and CMAKE_SYSTEM_VERSION (Windows SDK) automatically.
         """
         opts: dict[str, str] = {}
 
         # Inject BOOST_ROOT if not already in the environment
         boost_root = os.environ.get("BOOST_ROOT", "")
         if not boost_root:
-            # Try known default install paths used by our own installer
             for candidate in [
                 r"C:\local\boost_1_86_0",
                 r"C:\local\boost_1_85_0",
@@ -125,6 +124,38 @@ class BuildManager:
             opts["BOOST_ROOT"] = boost_root
 
         return opts
+
+    def _detect_windows_sdk(self) -> str:
+        """Return the highest Windows SDK version that MSBuild can actually use.
+
+        SDK 10.0.26100.0 ships with Windows 11 24H2 but is NOT fully wired into
+        VS 2022 when installed via Windows Update — MSBuild raises MSB8036 even
+        though the headers and libs are present. Skip it and prefer the highest
+        VS-Installer-managed SDK that has both Include/um/Windows.h and Lib.
+        """
+        pf86 = os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")
+        include_root = Path(pf86, "Windows Kits", "10", "Include")
+        lib_root = Path(pf86, "Windows Kits", "10", "Lib")
+        if not include_root.exists():
+            return ""
+
+        # Known-broken with VS 2022 when installed via Windows Update
+        skip_versions = {"10.0.26100.0"}
+
+        candidates = sorted(
+            [d.name for d in include_root.iterdir()
+             if d.is_dir() and d.name.startswith("10.")],
+            reverse=True
+        )
+        for ver in candidates:
+            if ver in skip_versions:
+                continue
+            if not (include_root / ver / "um" / "Windows.h").exists():
+                continue
+            if not (lib_root / ver / "um" / "x64").exists():
+                continue
+            return ver
+        return ""
 
     def _find_msbuild(self) -> str:
         # Use vswhere to locate MSBuild
@@ -147,9 +178,31 @@ class BuildManager:
                 pass
         return "msbuild"
 
+    def _build_env(self) -> dict:
+        """Return environment for cmake/msbuild with VCTargetsPath pre-set.
+
+        CMake probes VCTargetsPath by running MSBuild on a tiny test project.
+        That probe triggers Windows SDK validation which fails when the SDK
+        (10.0.26100.0) is present in the filesystem but not wired into VS.
+        Setting VCTargetsPath as an env var makes CMake skip the probe entirely.
+        """
+        env = os.environ.copy()
+        if "VCTargetsPath" not in env:
+            # Try to find the VC targets path from the VS installation
+            for edition in ("Community", "Professional", "Enterprise", "BuildTools"):
+                candidate = Path(
+                    env.get("ProgramFiles", r"C:\Program Files"),
+                    "Microsoft Visual Studio", "2022", edition,
+                    "MSBuild", "Microsoft", "VC", "v170"
+                )
+                if candidate.exists():
+                    env["VCTargetsPath"] = str(candidate) + "\\"
+                    break
+        return env
+
     def _run_streaming(self, cmd: list[str], cwd: Path) -> Generator[tuple[str, str], None, None]:
         """Run command, yield (level, line) tuples."""
-        env = os.environ.copy()
+        env = self._build_env()
         try:
             proc = subprocess.Popen(
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
